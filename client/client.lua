@@ -77,60 +77,13 @@ end
 
 RegisterNetEvent('GLDNRMZ-rat:client:menu', function()
     if CurrentCops >= Config.MinimumMethJobPolice then
-        exports['qb-menu']:openMenu({
-            {
-                header = "PLEASE, NO NOT talk to me",
-                isMenuHeader = true
-            },
-            {
-                header = "",
-                txt = "Do you have drugs?",
-                icon = "fa-sharp fa-solid fa-chart-pie",
-                params = {
-                    isServer = false,
-                    event = "GLDNRMZ-rat:client:menu2",
-                }
-            },
+        exports.bl_dialog:showDialog({
+            ped = startboss,
+            dialog = Config.RatDialog
         })
     else
         QBCore.Functions.Notify("Not enough police on duty", 'error')
     end
-end)
-
-RegisterNetEvent('GLDNRMZ-rat:client:menu2', function()
-    exports['qb-menu']:openMenu({
-        {
-            header = "NO!",
-            isMenuHeader = true
-        },
-        {
-            header = "",
-            txt = "I think you're lying",
-            icon = "fa-sharp fa-solid fa-chart-pie",
-            params = {
-                isServer = false,
-                event = "GLDNRMZ-rat:client:menu3",
-            }
-        },
-    })
-end)
-
-RegisterNetEvent('GLDNRMZ-rat:client:menu3', function()
-    exports['qb-menu']:openMenu({
-        {
-            header = "GET AWAY FROM ME",
-            isMenuHeader = true
-        },
-        {
-            header = "",
-            txt = "C'mon man",
-            icon = "fa-sharp fa-solid fa-chart-pie",
-            params = {
-                isServer = false,
-                event = "GLDNRMZ-rat:client:start",
-            }
-        },
-    })
 end)
 
 RegisterNetEvent('GLDNRMZ-rat:client:start', function()
@@ -186,8 +139,10 @@ end)
 
 
 function PoliceAlert()
+    if not Config.Dispatch.Enabled then return end
     if math.random(1,100) >= Config.AlertChance then return end
-    exports["ps-dispatch"]:Informant()
+    local coords = GetEntityCoords(PlayerPedId())
+    Config.Dispatch.Function(coords)
 end
 
 function TargetDeadPed()
